@@ -31,19 +31,15 @@ public final class Finder<Id, Value> {
     }
 
     private boolean sequenceAt(List<Value> sequence, int index, Id id, Path<Id> path) {
-        System.out.println("WordAt: word is " + String.valueOf(sequence) + " - index is " + index + " - current coordinates are " + id);
         if (path.contains(id)) {
-            // System.out.println("Coordinates " + coor + " already in trail. Skipping");
             return false;
         }
         Value value = sequence.get(index);
         Node<Id, Value> node = this.graph.nodeAt(id);
         if (node == null || !node.value().equals(value)) {
-            // System.out.println("Expected letter " + letter + " but " + this.board.letterAt(coor) + " was found at coordinates " + coor);
             return false;
         }
         if (index == sequence.size() - 1) {
-            // System.out.println("Word found!");
             return true;
         }
         Path<Id> newPath = path.add(id);

@@ -70,5 +70,4 @@ final class Row<Value> {
     public int hashCode() {
         return Objects.hash(index, data.hashCode());
     }
-
 }

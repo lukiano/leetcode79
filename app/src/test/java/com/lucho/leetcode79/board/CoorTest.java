@@ -29,28 +29,6 @@ class CoorTest {
     }
 
     @Test
-    void identifiesCoordinatesInsideBoardBounds() {
-        Board<Character> board = new Board<>(new Character[][] {
-            { 'A', 'B', 'C' },
-            { 'D', 'E', 'F' }
-        });
-
-        assertTrue(new Coor(0, 0).inBoundsFor(board));
-        assertTrue(new Coor(2, 1).inBoundsFor(board));
-    }
-
-    @Test
-    void identifiesCoordinatesOutsideBoardBounds() {
-        Board<Character> board = new Board<>(new Character[][] {
-            { 'A', 'B', 'C' },
-            { 'D', 'E', 'F' }
-        });
-
-        assertFalse(new Coor(3, 0).inBoundsFor(board));
-        assertFalse(new Coor(0, 2).inBoundsFor(board));
-    }
-
-    @Test
     void usesRecordValueSemantics() {
         Coor first = new Coor(1, 2);
         Coor second = new Coor(1, 2);

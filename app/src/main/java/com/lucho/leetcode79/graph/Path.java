@@ -44,5 +44,4 @@ final class Path<Value> {
     public String toString() {
         return this.data.toString();
     }
-
 }

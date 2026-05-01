@@ -92,6 +92,4 @@ public final class Board<Value> implements Graph<Coor, Value> {
         }
         return sb.toString();
     }
-
-
 }

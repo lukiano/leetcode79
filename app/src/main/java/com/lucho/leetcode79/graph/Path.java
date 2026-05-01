@@ -1,25 +1,25 @@
-package com.lucho.leetcode79;
+package com.lucho.leetcode79.graph;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class Path<T> {
-    private ArrayList<T> data;
+final class Path<Value> {
+    private final ArrayList<Value> data;
 
     public Path() {
         this(new ArrayList<>());
     }
 
-    private Path(ArrayList<T> data) {
+    private Path(ArrayList<Value> data) {
         this.data = data;
     }
 
-    public boolean contains(T t) {
+    public boolean contains(Value t) {
         return this.data.contains(t);
     }
 
-    public Path<T> add(T t) {
-        ArrayList<T> clone = new ArrayList<>(this.data);
+    public Path<Value> add(Value t) {
+        ArrayList<Value> clone = new ArrayList<>(this.data);
         clone.add(t);
         return new Path<>(clone);
     }

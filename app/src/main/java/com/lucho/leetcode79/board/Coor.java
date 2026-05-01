@@ -1,6 +1,6 @@
-package com.lucho.leetcode79;
+package com.lucho.leetcode79.board;
 
-public record Coor(int x, int y) {
+record Coor(int x, int y) {
 
     public Coor {
         if (x < 0) {

@@ -93,6 +93,33 @@ class FinderTest {
     }
 
     @Test
+    void returnsFalseWhenSequenceNeedsMoreValuesThanGraphContains() {
+        Graph<String, Character> graph = new Graph<>() {
+            @Override
+            public Set<Node<String, Character>> nodesWithValue(Character value) {
+                if (Objects.equals(value, 'A')) {
+                    return Set.of(new Node<>("a", 'A'));
+                }
+                return Set.of();
+            }
+
+            @Override
+            public Node<String, Character> nodeAt(String id) {
+                throw new AssertionError("Impossible value counts should stop before traversal");
+            }
+
+            @Override
+            public Set<Node<String, Character>> adjacentsOf(String id) {
+                throw new AssertionError("Impossible value counts should stop before traversal");
+            }
+        };
+
+        Finder<String, Character> finder = new Finder<>(graph, List.of('A', 'A'));
+
+        assertFalse(finder.containsWord());
+    }
+
+    @Test
     void returnsFalseWhenGraphHasCandidateButNodeLookupIsMissing() {
         Graph<String, Character> graph = new Graph<>() {
             @Override

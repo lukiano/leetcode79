@@ -30,6 +30,12 @@ testing {
         }
     }
 }
+test {
+    afterTest { descriptor, result ->
+        def duration = result.endTime - result.startTime
+        println "Test ${descriptor.className}.${descriptor.name} took ${duration}ms"
+    }
+}
 
 // Apply a specific Java toolchain to ease working on different environments.
 java {

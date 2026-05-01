@@ -17,26 +17,20 @@ import static java.util.Collections.unmodifiableSet;
 
 public final class Board<Value> implements Graph<Coor, Value> {
   
-    private List<Row<Value>> board;
+    private List<List<Node<Coor, Value>>> board;
     private Map<Value, Set<Node<Coor, Value>>> values = new HashMap<>();
 
     public Board(@NonNull Value @NonNull [] @NonNull [] board) {
-        this.board = new ArrayList<Row<Value>>(board.length);
+        this.board = new ArrayList<List<Node<Coor, Value>>>(board.length);
         for (int y = 0; y < board.length; y++) {
             Value[] row = board[y];
-            Row<Value> newRow = new Row<>(y, row.length);
+            List<Node<Coor, Value>> newRow = new ArrayList<>(row.length);
             for (int x = 0; x < row.length; x++) {
                 Value value = row[x];
-                Coor coor = new Coor(x, y);
-                Node<Coor, Value> cell = new Node<>(coor, value);
-                if (this.values.containsKey(value)) {
-                    this.values.get(value).add(cell);
-                } else {
-                    Set<Node<Coor, Value>> cells = new HashSet<>();
-                    cells.add(cell);
-                    this.values.put(value, cells);
-                }
-                newRow.set(x, value);
+                Node<Coor, Value> node = new Node<>(new Coor(x, y), value);
+                Set<Node<Coor, Value>> nodes = this.values.computeIfAbsent(value, (val) -> new HashSet<>());
+                nodes.add(node);
+                newRow.add(node);
             }
             this.board.add(newRow);
         }
@@ -47,7 +41,7 @@ public final class Board<Value> implements Graph<Coor, Value> {
     }
 
     public int length() {
-        return this.board.get(0).length();
+        return this.board.get(0).size();
     }
 
     @Override
@@ -60,35 +54,41 @@ public final class Board<Value> implements Graph<Coor, Value> {
 
     @Override
     public Node<Coor, Value> nodeAt(Coor coor) {
-        return this.board.get(coor.y()).at(coor.x());
+        return this.board.get(coor.y()).get(coor.x());
     }
 
     @Override
     public Set<Node<Coor, Value>> adjacentsOf(Coor coor) {
         int x = coor.x();
         int y = coor.y();
-        Set<Node<Coor, Value>> cells = new HashSet<>(4);
+        Set<Node<Coor, Value>> nodes = new HashSet<>(4);
         if (y > 0) {
-            cells.add(this.board.get(y - 1).at(x));
+            nodes.add(this.board.get(y - 1).get(x));
         }
-        Row<Value> lane = this.board.get(y);
+        List<Node<Coor, Value>> lane = this.board.get(y);
         if (x > 0) {
-            cells.add(lane.at(x - 1));
+            nodes.add(lane.get(x - 1));
         }
-        if (x < lane.length() - 1) {
-            cells.add(lane.at(x + 1));
+        if (x < lane.size() - 1) {
+            nodes.add(lane.get(x + 1));
         }
         if (y < this.board.size() - 1) {
-            cells.add(this.board.get(y + 1).at(x));
+            nodes.add(this.board.get(y + 1).get(x));
         }
-        return unmodifiableSet(cells);
+        return unmodifiableSet(nodes);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (Row<Value> row : board) {
-            sb.append(row).append('\n');
+        int index = 0;
+        for (List<Node<Coor, Value>> row : board) {
+            sb.append("Row[").append(index).append("]: ");
+            for (Node<Coor, Value> node : row) {
+                sb.append(node != null ? node.value().toString() : '?');
+            }
+            sb.append('\n');
+            index++;
         }
         return sb.toString();
     }

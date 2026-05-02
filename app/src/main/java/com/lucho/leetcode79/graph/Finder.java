@@ -55,7 +55,7 @@ public final class Finder<Id, Value> {
         List<Value> searchSequence = this.sequenceWithFewestStartingCandidates();
         Value firstValue = searchSequence.get(0);
         Set<Id> candidates = this.graph.nodesWithValue(firstValue);
-        Path<Id> path = new Path<>();
+        List<Id> path = new ArrayList<>();
         return candidates.stream().anyMatch(id -> this.sequenceAt(searchSequence, 0, id, path));
     }
 
@@ -73,7 +73,7 @@ public final class Finder<Id, Value> {
         return reversed;
     }
 
-    private boolean sequenceAt(List<Value> sequence, int index, Id id, Path<Id> path) {
+    private boolean sequenceAt(List<Value> sequence, int index, Id id, List<Id> path) {
         if (path.contains(id)) {
             return false;
         }
@@ -85,7 +85,9 @@ public final class Finder<Id, Value> {
         if (index == sequence.size() - 1) {
             return true;
         }
-        Path<Id> newPath = path.add(id);
+        ArrayList<Id> newPath = new ArrayList<>(path);
+        newPath.add(id);
+
         int newIndex = index + 1;
   
         Set<Id> adjacents = this.graph.adjacentsOf(id);

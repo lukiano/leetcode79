@@ -2,7 +2,7 @@ package com.lucho.leetcode79.board;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -10,7 +10,6 @@ import java.util.Set;
 import com.lucho.leetcode79.graph.Graph;
 
 import static java.util.Collections.emptySet;
-import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 
 public final class Board<Value> implements Graph<Coor, Value> {
@@ -56,24 +55,24 @@ public final class Board<Value> implements Graph<Coor, Value> {
     }
 
     @Override
-    public Map<Coor, Value> adjacentsOf(Coor coor) {
+    public Set<Coor> adjacentsOf(Coor coor) {
         int x = coor.x();
         int y = coor.y();
-        Map<Coor, Value> nodes = new LinkedHashMap<>(4);
+        Set<Coor> nodes = new LinkedHashSet<>(4);
         if (y > 0) {
-            nodes.put(new Coor(x, y - 1), this.board.get(y - 1).get(x));
+            nodes.add(new Coor(x, y - 1));
         }
         List<Value> lane = this.board.get(y);
         if (x > 0) {
-            nodes.put(new Coor(x - 1, y), lane.get(x - 1));
+            nodes.add(new Coor(x - 1, y));
         }
         if (x < lane.size() - 1) {
-            nodes.put(new Coor(x + 1, y), lane.get(x + 1));
+            nodes.add(new Coor(x + 1, y));
         }
         if (y < this.board.size() - 1) {
-            nodes.put(new Coor(x, y + 1), this.board.get(y + 1).get(x));
+            nodes.add(new Coor(x, y + 1));
         }
-        return unmodifiableMap(nodes);
+        return unmodifiableSet(nodes);
     }
 
     @Override

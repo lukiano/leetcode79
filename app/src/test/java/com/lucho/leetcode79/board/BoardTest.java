@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Set;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -61,11 +60,11 @@ class BoardTest {
             List.of('G', 'H', 'I')
         ));
 
-        assertEquals(Map.of(
-            new Coor(1, 0), 'B',
-            new Coor(0, 1), 'D',
-            new Coor(2, 1), 'F',
-            new Coor(1, 2), 'H'
+        assertEquals(Set.of(
+            new Coor(1, 0),
+            new Coor(0, 1),
+            new Coor(2, 1),
+            new Coor(1, 2)
         ), board.adjacentsOf(new Coor(1, 1)));
     }
 
@@ -73,16 +72,16 @@ class BoardTest {
     void returnsAdjacentNodesForCornerCoordinate() {
         Board<Character> board = sampleBoard();
 
-        assertEquals(Map.of(
-            new Coor(1, 0), 'B',
-            new Coor(0, 1), 'D'
+        assertEquals(Set.of(
+            new Coor(1, 0),
+            new Coor(0, 1)
         ), board.adjacentsOf(new Coor(0, 0)));
     }
 
     @Test
     void adjacentsOfIsUnmodifiable() {
         Board<Character> board = sampleBoard();
-        Map<Coor, Character> adjacents = board.adjacentsOf(new Coor(0, 0));
+        Set<Coor> adjacents = board.adjacentsOf(new Coor(0, 0));
 
         assertThrows(UnsupportedOperationException.class, () -> adjacents.clear());
     }

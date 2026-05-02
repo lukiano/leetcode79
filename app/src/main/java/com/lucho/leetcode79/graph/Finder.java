@@ -88,7 +88,7 @@ public final class Finder<Id, Value> {
         Path<Id> newPath = path.add(id);
         int newIndex = index + 1;
   
-        Map<Id, Value> adjacents = this.graph.adjacentsOf(id);
-        return adjacents.keySet().stream().anyMatch(adj -> this.sequenceAt(sequence, newIndex, adj, newPath));
+        Set<Id> adjacents = this.graph.adjacentsOf(id);
+        return adjacents.stream().anyMatch(adj -> this.sequenceAt(sequence, newIndex, adj, newPath));
     }
 }

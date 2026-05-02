@@ -4,7 +4,6 @@ import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +11,6 @@ import java.util.Objects;
 import java.util.Set;
 
 import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -114,7 +112,7 @@ class FinderTest {
             }
 
             @Override
-            public Map<String, Character> adjacentsOf(String id) {
+            public Set<String> adjacentsOf(String id) {
                 throw new AssertionError("Impossible value counts should stop before traversal");
             }
         };
@@ -138,8 +136,8 @@ class FinderTest {
             }
 
             @Override
-            public Map<String, Character> adjacentsOf(String id) {
-                return emptyMap();
+            public Set<String> adjacentsOf(String id) {
+                return emptySet();
             }
         };
 
@@ -181,12 +179,12 @@ class FinderTest {
         }
 
         @Override
-        public Map<String, Character> adjacentsOf(String id) {
-            Map<String, Character> adjacents = new LinkedHashMap<>();
+        public Set<String> adjacentsOf(String id) {
+            Set<String> adjacents = new LinkedHashSet<>();
             for (String adjacentId : edges.getOrDefault(id, emptySet())) {
                 Character value = nodes.get(adjacentId);
                 if (value != null) {
-                    adjacents.put(adjacentId, value);
+                    adjacents.add(adjacentId);
                 }
             }
             return adjacents;
@@ -205,7 +203,7 @@ class FinderTest {
         }
 
         @Override
-        public Map<Id, Value> adjacentsOf(Id id) {
+        public Set<Id> adjacentsOf(Id id) {
             throw new AssertionError("Empty sequences should not read the graph");
         }
     }

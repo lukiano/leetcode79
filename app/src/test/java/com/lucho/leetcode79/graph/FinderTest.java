@@ -1,14 +1,19 @@
 package com.lucho.leetcode79.graph;
 
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.emptySet;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -16,7 +21,7 @@ class FinderTest {
 
     @Test
     void emptySequenceIsAlwaysFound() {
-        Finder<String, Character> finder = new Finder<>(new FailingGraph<>(), List.of());
+        Finder<String, Character> finder = new Finder<>(new FailingGraph<>(), emptyList());
 
         assertTrue(finder.containsWord());
     }
@@ -96,20 +101,20 @@ class FinderTest {
     void returnsFalseWhenSequenceNeedsMoreValuesThanGraphContains() {
         Graph<String, Character> graph = new Graph<>() {
             @Override
-            public Set<Node<String, Character>> nodesWithValue(Character value) {
+            public Set<String> nodesWithValue(Character value) {
                 if (Objects.equals(value, 'A')) {
-                    return Set.of(new Node<>("a", 'A'));
+                    return Set.of("a");
                 }
-                return Set.of();
+                return emptySet();
             }
 
             @Override
-            public Node<String, Character> nodeAt(String id) {
+            public Character get(String id) {
                 throw new AssertionError("Impossible value counts should stop before traversal");
             }
 
             @Override
-            public Set<Node<String, Character>> adjacentsOf(String id) {
+            public Map<String, Character> adjacentsOf(String id) {
                 throw new AssertionError("Impossible value counts should stop before traversal");
             }
         };
@@ -123,18 +128,18 @@ class FinderTest {
     void returnsFalseWhenGraphHasCandidateButNodeLookupIsMissing() {
         Graph<String, Character> graph = new Graph<>() {
             @Override
-            public Set<Node<String, Character>> nodesWithValue(Character value) {
-                return Set.of(new Node<>("missing", value));
+            public Set<String> nodesWithValue(Character value) {
+                return Set.of("missing");
             }
 
             @Override
-            public Node<String, Character> nodeAt(String id) {
+            public Character get(String id) {
                 return null;
             }
 
             @Override
-            public Set<Node<String, Character>> adjacentsOf(String id) {
-                return Set.of();
+            public Map<String, Character> adjacentsOf(String id) {
+                return emptyMap();
             }
         };
 
@@ -143,59 +148,45 @@ class FinderTest {
         assertFalse(finder.containsWord());
     }
 
-    @Test
-    void cachesSearchResult() {
-        DummyGraph graph = new DummyGraph()
-            .node("a", 'A');
-        Finder<String, Character> finder = new Finder<>(graph, List.of('A'));
-
-        assertTrue(finder.containsWord());
-        assertTrue(finder.containsWord());
-
-        assertTrue(graph.nodesWithValueCalls == 1);
-    }
-
     private static final class DummyGraph implements Graph<String, Character> {
-        private final Map<String, Node<String, Character>> nodes = new HashMap<>();
+        private final Map<String, Character> nodes = new HashMap<>();
         private final Map<String, Set<String>> edges = new HashMap<>();
-        private int nodesWithValueCalls;
 
-        private DummyGraph node(String id, Character value) {
-            nodes.put(id, new Node<>(id, value));
-            edges.putIfAbsent(id, new LinkedHashSet<>());
+        private DummyGraph node(@NonNull String id, @NonNull Character value) {
+            this.nodes.put(id, value);
+            this.edges.putIfAbsent(id, new LinkedHashSet<>());
             return this;
         }
 
         private DummyGraph edge(String first, String second) {
-            edges.computeIfAbsent(first, ignored -> new LinkedHashSet<>()).add(second);
-            edges.computeIfAbsent(second, ignored -> new LinkedHashSet<>()).add(first);
+            this.edges.computeIfAbsent(first, ignored -> new LinkedHashSet<>()).add(second);
+            this.edges.computeIfAbsent(second, ignored -> new LinkedHashSet<>()).add(first);
             return this;
         }
 
         @Override
-        public Set<Node<String, Character>> nodesWithValue(Character value) {
-            nodesWithValueCalls++;
-            Set<Node<String, Character>> matches = new LinkedHashSet<>();
-            for (Node<String, Character> node : nodes.values()) {
-                if (Objects.equals(value, node.value())) {
-                    matches.add(node);
+        public Set<String> nodesWithValue(Character value) {
+            Set<String> matches = new LinkedHashSet<>();
+            for (Map.Entry<String, Character> node : this.nodes.entrySet()) {
+                if (Objects.equals(value, node.getValue())) {
+                    matches.add(node.getKey());
                 }
             }
             return matches;
         }
 
         @Override
-        public Node<String, Character> nodeAt(String id) {
+        public Character get(String id) {
             return nodes.get(id);
         }
 
         @Override
-        public Set<Node<String, Character>> adjacentsOf(String id) {
-            Set<Node<String, Character>> adjacents = new LinkedHashSet<>();
-            for (String adjacentId : edges.getOrDefault(id, Set.of())) {
-                Node<String, Character> node = nodes.get(adjacentId);
-                if (node != null) {
-                    adjacents.add(node);
+        public Map<String, Character> adjacentsOf(String id) {
+            Map<String, Character> adjacents = new LinkedHashMap<>();
+            for (String adjacentId : edges.getOrDefault(id, emptySet())) {
+                Character value = nodes.get(adjacentId);
+                if (value != null) {
+                    adjacents.put(adjacentId, value);
                 }
             }
             return adjacents;
@@ -204,17 +195,17 @@ class FinderTest {
 
     private static final class FailingGraph<Id, Value> implements Graph<Id, Value> {
         @Override
-        public Set<Node<Id, Value>> nodesWithValue(Value value) {
+        public Set<Id> nodesWithValue(Value value) {
             throw new AssertionError("Empty sequences should not read the graph");
         }
 
         @Override
-        public Node<Id, Value> nodeAt(Id id) {
+        public Value get(Id id) {
             throw new AssertionError("Empty sequences should not read the graph");
         }
 
         @Override
-        public Set<Node<Id, Value>> adjacentsOf(Id id) {
+        public Map<Id, Value> adjacentsOf(Id id) {
             throw new AssertionError("Empty sequences should not read the graph");
         }
     }

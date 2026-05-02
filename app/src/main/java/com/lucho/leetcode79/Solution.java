@@ -16,18 +16,19 @@ public class Solution {
         return new Finder<>(board, toCharacterList(word)).containsWord();
     }
 
-    private Character[][] toCharacterGrid(char[][] grid) {
-        Character[][] characterGrid = new Character[grid.length][];
-        for (int y = 0; y < grid.length; y++) {
-            characterGrid[y] = new Character[grid[y].length];
-            for (int x = 0; x < grid[y].length; x++) {
-                characterGrid[y][x] = grid[y][x];
+    private List<List<Character>> toCharacterGrid(char[][] grid) {
+        List<List<Character>> characterGrid = new ArrayList<List<Character>>(grid.length);
+        for (char[] row : grid) {
+            List<Character> newRow = new ArrayList<>(row.length);
+            for (char value : row) {
+                newRow.add(value);
             }
+            characterGrid.add(newRow);
         }
         return characterGrid;
     }
 
-    private List<Character> toCharacterList(String word) {
+    private List<Character> toCharacterList(CharSequence word) {
         List<Character> characters = new ArrayList<>(word.length());
         for (int i = 0; i < word.length(); i++) {
             characters.add(word.charAt(i));

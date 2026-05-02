@@ -1,10 +1,10 @@
 package com.lucho.leetcode79.board;
 
-import com.lucho.leetcode79.graph.Node;
-
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Set;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -21,11 +21,11 @@ class BoardTest {
     }
 
     @Test
-    void returnsNodeAtCoordinate() {
+    void returnsValueAtCoordinate() {
         Board<Character> board = sampleBoard();
 
-        assertEquals(new Node<>(new Coor(0, 0), 'A'), board.nodeAt(new Coor(0, 0)));
-        assertEquals(new Node<>(new Coor(2, 1), 'C'), board.nodeAt(new Coor(2, 1)));
+        assertEquals('A', board.get(new Coor(0, 0)));
+        assertEquals('C', board.get(new Coor(2, 1)));
     }
 
     @Test
@@ -33,8 +33,8 @@ class BoardTest {
         Board<Character> board = sampleBoard();
 
         assertEquals(Set.of(
-            new Node<>(new Coor(0, 0), 'A'),
-            new Node<>(new Coor(1, 1), 'A')
+            new Coor(0, 0),
+            new Coor(1, 1)
         ), board.nodesWithValue('A'));
     }
 
@@ -48,24 +48,24 @@ class BoardTest {
     @Test
     void nodesWithValueIsUnmodifiable() {
         Board<Character> board = sampleBoard();
-        Set<Node<Coor, Character>> nodes = board.nodesWithValue('A');
+        Set<Coor> nodes = board.nodesWithValue('A');
 
-        assertThrows(UnsupportedOperationException.class, () -> nodes.add(new Node<>(new Coor(2, 0), 'A')));
+        assertThrows(UnsupportedOperationException.class, () -> nodes.add(new Coor(2, 0)));
     }
 
     @Test
     void returnsAdjacentNodesForMiddleCoordinate() {
-        Board<Character> board = new Board<>(new Character[][] {
-            { 'A', 'B', 'C' },
-            { 'D', 'E', 'F' },
-            { 'G', 'H', 'I' }
-        });
+        Board<Character> board = new Board<>(List.of(
+            List.of('A', 'B', 'C'),
+            List.of('D', 'E', 'F'),
+            List.of('G', 'H', 'I')
+        ));
 
-        assertEquals(Set.of(
-            new Node<>(new Coor(1, 0), 'B'),
-            new Node<>(new Coor(0, 1), 'D'),
-            new Node<>(new Coor(2, 1), 'F'),
-            new Node<>(new Coor(1, 2), 'H')
+        assertEquals(Map.of(
+            new Coor(1, 0), 'B',
+            new Coor(0, 1), 'D',
+            new Coor(2, 1), 'F',
+            new Coor(1, 2), 'H'
         ), board.adjacentsOf(new Coor(1, 1)));
     }
 
@@ -73,16 +73,16 @@ class BoardTest {
     void returnsAdjacentNodesForCornerCoordinate() {
         Board<Character> board = sampleBoard();
 
-        assertEquals(Set.of(
-            new Node<>(new Coor(1, 0), 'B'),
-            new Node<>(new Coor(0, 1), 'D')
+        assertEquals(Map.of(
+            new Coor(1, 0), 'B',
+            new Coor(0, 1), 'D'
         ), board.adjacentsOf(new Coor(0, 0)));
     }
 
     @Test
     void adjacentsOfIsUnmodifiable() {
         Board<Character> board = sampleBoard();
-        Set<Node<Coor, Character>> adjacents = board.adjacentsOf(new Coor(0, 0));
+        Map<Coor, Character> adjacents = board.adjacentsOf(new Coor(0, 0));
 
         assertThrows(UnsupportedOperationException.class, () -> adjacents.clear());
     }
@@ -95,9 +95,10 @@ class BoardTest {
     }
 
     private Board<Character> sampleBoard() {
-        return new Board<>(new Character[][] {
-            { 'A', 'B', 'C' },
-            { 'D', 'A', 'C' }
-        });
+        List.of('A');
+        return new Board<>(List.of(
+            List.of('A', 'B', 'C'),
+            List.of('D', 'A', 'C')
+        ));
     }
 }
